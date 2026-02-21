@@ -15,7 +15,10 @@ const TABS: { id: Screen; label: string; icon: string }[] = [
 
 export default function BottomNav({ current, onChange }: Props) {
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm bg-[#0a0a0a]/90 backdrop-blur border-t border-white/10">
+    <nav
+      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm bg-[#0a0a0a]/90 backdrop-blur border-t border-white/10"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
       <div className="flex">
         {TABS.map((tab) => {
           const isActive = current === tab.id;

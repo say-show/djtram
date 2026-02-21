@@ -11,6 +11,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -22,7 +23,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className="antialiased bg-[#0a0a0a] text-white min-h-screen flex justify-center">
         {/* スマートフォン幅に制限 */}
-        <div className="w-full max-w-sm relative min-h-screen flex flex-col">
+        <div className="w-full max-w-sm relative min-h-dvh flex flex-col">
           {children}
         </div>
       </body>
