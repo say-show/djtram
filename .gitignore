@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# プロジェクト資料（大容量ファイル）
+*.mp4
+*.pdf
+/slide/
