@@ -3,19 +3,16 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCurrentMode, TramMode, MODES } from "@/lib/modeUtils";
-import { usePresence } from "@/lib/usePresence";
 import WaveAnimation from "./WaveAnimation";
 
 const MODE_LIST = Object.values(MODES);
 const TRACK_INTERVAL_MS = 20_000;
+const MIN_LISTENERS = 5;
+const MAX_LISTENERS = 12;
 
-// リスナー数 → リング数（1人: 1リング、10人以上: 5リング）
+// リスナー数 (5〜12) → リング数 (2〜5)
 function calcRingCount(count: number): number {
-  if (count <= 1) return 1;
-  if (count <= 3) return 2;
-  if (count <= 5) return 3;
-  if (count <= 8) return 4;
-  return 5;
+  return Math.round((count - MIN_LISTENERS) / (MAX_LISTENERS - MIN_LISTENERS) * 3) + 2;
 }
 
 export default function PlayScreen() {
@@ -23,11 +20,30 @@ export default function PlayScreen() {
   const [mode, setMode] = useState<TramMode>(MODES["boot-up"]);
   const [hasAudio, setHasAudio] = useState(false);
   const [trackIndex, setTrackIndex] = useState(0);
-  const listenerCount = usePresence();
+  // SSR対策: 初期値固定、マウント後にランダム化
+  const [listenerCount, setListenerCount] = useState(8);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setMode(getCurrentMode());
+  }, []);
+
+  // マウント後にリスナー数をランダム初期化
+  useEffect(() => {
+    setListenerCount(
+      Math.floor(MIN_LISTENERS + Math.random() * (MAX_LISTENERS - MIN_LISTENERS + 1))
+    );
+  }, []);
+
+  // 30秒ごとに ±1〜2 変動
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setListenerCount((prev) => {
+        const delta = (Math.floor(Math.random() * 2) + 1) * (Math.random() < 0.5 ? 1 : -1);
+        return Math.min(MAX_LISTENERS, Math.max(MIN_LISTENERS, prev + delta));
+      });
+    }, 30_000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -68,8 +84,8 @@ export default function PlayScreen() {
   const currentTrack = mode.setlist[trackIndex];
   const ringCount = calcRingCount(listenerCount);
 
-  // リスナー数に応じてグロウ強度を変化（1人: 薄め、10人以上: 強め）
-  const glowIntensity = Math.min(1, (listenerCount - 1) / 9);
+  // リスナー数に応じてグロウ強度を変化（5人: 薄め、12人: 強め）
+  const glowIntensity = (listenerCount - MIN_LISTENERS) / (MAX_LISTENERS - MIN_LISTENERS);
   const glowShadow = isPlaying
     ? `0 0 ${20 + glowIntensity * 20}px ${mode.color}${Math.round(40 + glowIntensity * 60).toString(16)}, 0 0 ${60 + glowIntensity * 60}px ${mode.color}${Math.round(20 + glowIntensity * 40).toString(16)}`
     : `0 0 10px ${mode.color}22`;
