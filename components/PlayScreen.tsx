@@ -149,9 +149,17 @@ export default function PlayScreen() {
           }}>
           <AnimatePresence mode="wait">
             <motion.span key={isPlaying ? "pause" : "play"}
-              initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-              className="text-4xl select-none" style={{ color: mode.color }}>
-              {isPlaying ? "⏸" : "▶"}
+              initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}>
+              {isPlaying ? (
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                  <rect x="8" y="7" width="7" height="22" rx="2" fill={mode.color} />
+                  <rect x="21" y="7" width="7" height="22" rx="2" fill={mode.color} />
+                </svg>
+              ) : (
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                  <path d="M11 8L29 18L11 28V8Z" fill={mode.color} />
+                </svg>
+              )}
             </motion.span>
           </AnimatePresence>
         </motion.button>
