@@ -9,9 +9,14 @@ const MODE_LIST = Object.values(MODES);
 
 export default function PlayScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [mode, setMode] = useState<TramMode>(getCurrentMode());
+  const [mode, setMode] = useState<TramMode>(MODES["boot-up"]);
   const [hasAudio, setHasAudio] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // クライアント側の時刻で初期モードを設定
+  useEffect(() => {
+    setMode(getCurrentMode());
+  }, []);
 
   // 音源ファイルの存在確認
   useEffect(() => {

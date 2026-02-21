@@ -13,9 +13,10 @@ export default function Home() {
 
   return (
     <main className="flex-1 pb-20">
-      {screen === "play" && <PlayScreen />}
-      {screen === "route" && <RouteScreen />}
-      {screen === "vibes" && <VibesScreen />}
+      {/* アンマウントせず非表示にすることでaudio再生を維持 */}
+      <div style={{ display: screen === "play" ? "block" : "none" }}><PlayScreen /></div>
+      <div style={{ display: screen === "route" ? "block" : "none" }}><RouteScreen /></div>
+      <div style={{ display: screen === "vibes" ? "block" : "none" }}><VibesScreen /></div>
       <BottomNav current={screen} onChange={setScreen} />
     </main>
   );
